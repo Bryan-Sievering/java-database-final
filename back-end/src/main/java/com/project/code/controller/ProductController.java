@@ -1,8 +1,8 @@
-package com.project.code.Controller;
+package com.project.code.controller;
 
 import com.project.code.model.Product;
-import com.project.code.repository.ProductRepository;
-import com.project.code.repository.InventoryRepository;
+import com.project.code.repo.ProductRepository;
+import com.project.code.repo.InventoryRepository;
 import com.project.code.service.ServiceClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

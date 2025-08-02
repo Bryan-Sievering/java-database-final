@@ -1,6 +1,6 @@
-package com.project.code.Repo;
+package com.project.code.repo;
 
-import com.project.code.Model.Review;
+import com.project.code.model.Review;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

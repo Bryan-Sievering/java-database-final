@@ -1,10 +1,10 @@
-package com.project.code.Controller;
+package com.project.code.controller;
 
 import com.project.code.model.CombinedRequest;
 import com.project.code.model.Inventory;
 import com.project.code.model.Product;
-import com.project.code.repository.InventoryRepository;
-import com.project.code.repository.ProductRepository;
+import com.project.code.repo.InventoryRepository;
+import com.project.code.repo.ProductRepository;
 import com.project.code.service.ServiceClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -30,33 +30,45 @@ public class InventoryController {
 
     @PutMapping
     public Map<String, String> updateInventory(@RequestBody CombinedRequest request) {
-    Map<String, String> response = new HashMap<>();
-    Product product = request.getProduct();
-    Inventory inventory = request.getInventory();
+        Map<String, String> response = new HashMap<>();
+        Product product = request.getProduct();
+        Inventory inventory = request.getInventory();
 
-    if (!serviceClass.validateProductId(product.getId())) {
-        response.put("message", "Invalid product ID");
+        if (!serviceClass.validateProductId(product.getId())) {
+            response.put("message", "Invalid product ID");
+            return response;
+        }
+
+        try {
+            Long storeId = null;
+            if (inventory.getStore() != null) {
+                Object id = inventory.getStore().getId();
+                if (id instanceof String) {
+                    storeId = Long.valueOf((String) id);
+                } else if (id instanceof Long) {
+                    storeId = (Long) id;
+                }
+            }
+
+            Inventory existingInventory = inventoryRepository.findByProductIdAndStoreId(product.getId(), storeId);
+
+            if (existingInventory != null) {
+                existingInventory.setQuantity(inventory.getQuantity());
+                inventoryRepository.save(existingInventory);
+                productRepository.save(product);
+                response.put("message", "Successfully updated product");
+            } else {
+                response.put("message", "No data available");
+            }
+        } catch (DataIntegrityViolationException e) {
+            response.put("message", "Data integrity violation: " + e.getMessage());
+        } catch (Exception e) {
+            response.put("message", "Error: " + e.getMessage());
+        }
+
         return response;
     }
 
-    try {
-        Inventory existingInventory = inventoryRepository.findByProductIdandStoreId(product.getId(), inventory.getStoreId());
-        if (existingInventory != null) {
-            existingInventory.setQuantity(inventory.getQuantity());
-            inventoryRepository.save(existingInventory);
-            productRepository.save(product);
-            response.put("message", "Successfully updated product");
-        } else {
-            response.put("message", "No data available");
-        }
-    } catch (DataIntegrityViolationException e) {
-        response.put("message", "Data integrity violation: " + e.getMessage());
-    } catch (Exception e) {
-        response.put("message", "Error: " + e.getMessage());
-    }
-
-    return response;
-    }
 
     @PostMapping
     public Map<String, String> saveInventory(@RequestBody Inventory inventory) {
@@ -86,16 +98,16 @@ public class InventoryController {
 
     @GetMapping("filter/{category}/{name}/{storeid}")
     public Map<String, Object> getProductName(
-            @PathVariable("storeid") Long storeId,
-            @PathVariable("name") String name,
-            @PathVariable("category") String category) {
+        @PathVariable("category") String category,        
+        @PathVariable("name") String name,
+        @PathVariable("storeid") Long storeId) {
 
         Map<String, Object> response = new HashMap<>();
 
         if ("null".equals(category) && !"null".equals(name)) {
             response.put("product", productRepository.findByNameLike(storeId, name));
         } else if (!"null".equals(category) && "null".equals(name)) {
-            response.put("product", productRepository.findByCategoryAndStoreId(category, storeId));
+            response.put("product", productRepository.findByCategoryAndStoreId(storeId, category));
         } else if (!"null".equals(category) && !"null".equals(name)) {
             response.put("product", productRepository.findByNameAndCategory(storeId, name, category));
         } else {
@@ -141,7 +153,7 @@ public class InventoryController {
             @PathVariable("storeId") Long storeId,
             @PathVariable("productId") Long productId) {
 
-            Inventory inventory = inventoryRepository.findByProductIdandStoreId(productId, storeId);
+            Inventory inventory = inventoryRepository.findByProductIdAndStoreId(productId, storeId);
             return inventory != null && inventory.getQuantity() >= quantity;           
     }
 }

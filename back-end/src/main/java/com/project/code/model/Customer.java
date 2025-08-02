@@ -1,7 +1,10 @@
-package com.project.code.Model;
+package com.project.code.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import com.project.code.model.OrderDetails;
+import com.project.code.model.OrderItem;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -31,7 +34,7 @@ public class Customer {
 
     @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     @JsonManagedReference
-    List<Order> orders = new ArrayList<>();
+    List<OrderDetails> orders = new ArrayList<>();
 
     public long getId() {
         return id;

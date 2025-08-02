@@ -1,6 +1,6 @@
-package com.project.code.Repo;
+package com.project.code.repo;
 
-import com.project.code.Model.Customer;
+import com.project.code.model.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

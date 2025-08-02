@@ -1,9 +1,9 @@
-package com.project.code.Service;
+package com.project.code.service;
 
-import com.project.code.Model.Inventory;
-import com.project.code.Model.Product;
-import com.project.code.Repo.InventoryRepository;
-import com.project.code.Repo.ProductRepository;
+import com.project.code.model.Inventory;
+import com.project.code.model.Product;
+import com.project.code.repo.InventoryRepository;
+import com.project.code.repo.ProductRepository;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,7 +18,7 @@ public class ServiceClass {
     }
 
     public boolean validateInventory(Inventory inventory) {
-        Inventory existingInventory = inventoryRepository.findByProductIdandStoreId(
+        Inventory existingInventory = inventoryRepository.findByProductIdAndStoreId(
             inventory.getProduct().getId(),
             inventory.getStore().getId()
         );
@@ -36,7 +36,7 @@ public class ServiceClass {
     }
 
     public Inventory getInventoryId(Inventory inventory) {
-        return inventoryRepository.findByProductIdandStoreId(
+        return inventoryRepository.findByProductIdAndStoreId(
             inventory.getProduct().getId(),
             inventory.getStore().getId()
         );

@@ -1,6 +1,6 @@
-package com.project.code.Repo;
+package com.project.code.repo;
 
-import com.project.code.Model.Product;
+import com.project.code.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;

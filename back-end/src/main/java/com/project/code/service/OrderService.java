@@ -1,7 +1,7 @@
-package com.project.code.Service;
+package com.project.code.service;
 
-import com.project.code.Model.*;
-import com.project.code.Repo.*;
+import com.project.code.model.*;
+import com.project.code.repo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +28,9 @@ public class OrderService {
 
     @Autowired
     private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private PurchaseProductDTO purchaseProductDTO;
 
     public void saveOrder(PlaceOrderRequestDTO placeOrderRequest) {
         // 1. Retrieve or create the Customer
@@ -59,7 +62,7 @@ public class OrderService {
         List<PurchaseProductDTO> purchaseProducts = placeOrderRequest.getPurchaseProduct();
         for (PurchaseProductDTO productDTO : purchaseProducts) {
             // Check inventory
-            Inventory inventory = inventoryRepository.findByProductIdandStoreId(productDTO.getId(), placeOrderRequest.getStoreId());
+            Inventory inventory = inventoryRepository.findByProductIdAndStoreId(purchaseProductDTO.getId(), placeOrderRequest.getStoreId());
             if (inventory == null || inventory.getStockLevel() < productDTO.getQuantity()) {
                 throw new RuntimeException("Insufficient stock for product ID: " + productDTO.getId());
             }

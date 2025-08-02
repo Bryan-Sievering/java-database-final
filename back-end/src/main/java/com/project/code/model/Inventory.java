@@ -1,4 +1,6 @@
-package com.project.code.Model;
+package com.project.code.model;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -7,15 +9,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
-
 @Entity
 public class Inventory {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     @JsonBackReference("inventory-product")
@@ -23,27 +21,19 @@ public class Inventory {
     private Product product;
 
     @ManyToOne
-    @JsonBackReference("inventory-store")
     @JoinColumn(name = "store_id")
+    @JsonBackReference("inventory-store")
     private Store store;
 
     private Integer stockLevel;
 
-    public Inventory(){
+    // Getters and Setters
 
-    }
-
-    public Inventory(Product product, Store store, Integer stockLevel){
-        this.product = product;
-        this.store = store;
-        this.stockLevel = stockLevel;
-    }
-
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -70,5 +60,37 @@ public class Inventory {
     public void setStockLevel(Integer stockLevel) {
         this.stockLevel = stockLevel;
     }
-}
 
+    // Constructors (if necessary)
+    public Inventory() {
+    }
+
+    public Inventory(Product product, Store store, Integer stockLevel) {
+        this.product = product;
+        this.store = store;
+        this.stockLevel = stockLevel;
+    }
+
+    public Long getStoreId() {
+        return store != null ? store.getId() : null;
+    }
+    
+    public Integer getQuantity() {
+        return stockLevel;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.stockLevel = quantity;
+    }
+    
+    
+
+    public String toString() {
+        return "Inventory{" +
+                "id=" + id +
+                ", product=" + (product != null ? product.getId() : "null") +
+                ", store=" + (store != null ? store.getId() : "null") +
+                ", stockLevel=" + stockLevel +
+                '}';
+    }
+}
